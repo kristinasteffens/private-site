@@ -49,12 +49,12 @@
         document.getElementById("logout").style.display = "inline";
       }
 
-      // Login button
-      document.getElementById("login").addEventListener("click", async () => {
-        await auth0.loginWithRedirect({
-          redirect_uri: window.location.origin
-        });
-      });
+   // Login button (debug version)
+document.getElementById("login").addEventListener("click", async () => {
+  alert("Login button clicked!");  // <-- This is the debug alert
+  // Uncomment this line when ready to test Auth0 login
+  // await auth0.loginWithRedirect({ redirect_uri: window.location.origin });
+});
 
       // Logout button
       document.getElementById("logout").addEventListener("click", () => {
