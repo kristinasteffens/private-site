@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Private Site</title>
+</head>
+<body>
+  <h1>Welcome to our site</h1>
+  <div id="content" hidden>
+    <p>This content is only for logged-in users!</p>
+  </div>
+
+  <div id="login"></div>
+
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script>
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on("init", user => {
+        if (!user) {
+          window.netlifyIdentity.on("login", () => {
+            document.location.reload();
+          });
+        } else {
+          document.getElementById("content").hidden = false;
+          document.getElementById("login").innerHTML =
+            '<button onclick="netlifyIdentity.logout()">Logout</button>';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

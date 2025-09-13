@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Protected Page</title>
+</head>
+<body>
+  <h1>Members Only</h1>
+
+  <div id="content" hidden>
+    <p>✅ You are logged in! This is private content only for members.</p>
+    <button onclick="netlifyIdentity.logout()">Logout</button>
+  </div>
+
+  <div id="message">
+    <p>⛔ You must log in to view this page.</p>
+    <button onclick="netlifyIdentity.open()">Login</button>
+  </div>
+
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script>
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on("init", user => {
+        if (user) {
+          document.getElementById("content").hidden = false;
+          document.getElementById("message").hidden = true;
+        } else {
+          window.netlifyIdentity.on("login", () => {
+            document.location.reload();
+          });
+        }
+      });
+    }
+  </script>
+</body>
+</html>
