@@ -1,9 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Private Site with Auth0</title>
+  <!-- Load Auth0 SPA JS library -->
   <script src="https://cdn.auth0.com/js/auth0-spa-js/1.28/auth0-spa-js.production.js"></script>
   <style>
     #login, #logout { padding: 10px 20px; margin: 10px; font-size: 16px; }
@@ -26,14 +26,14 @@
     // --------------------------
     // REPLACE THESE WITH YOUR AUTH0 VALUES
     // --------------------------
-    const auth0Domain = "dev-mpo3g6kdms6el57l.us.auth0.com";      // e.g., dev-mpo3g6kdms6el57l.us.auth0.com
+    const auth0Domain = "dev-abc123.us.auth0.com";      // e.g., dev-abc123.us.auth0.com
     const auth0ClientId = "f0K8SW4AfzaGGC8gKHcuc5EFuEEIraIH"; // e.g., f0K8SW4AfzaGGC8gKHcuc5EFuEEIraIH
 
-    let auth0 = null;
+    // Initialize Auth0 globally
+    window.auth0 = null;
 
     const configureAuth0 = async () => {
-      // Initialize Auth0 client
-      auth0 = await createAuth0Client({
+      window.auth0 = await createAuth0Client({
         domain: auth0Domain,
         client_id: auth0ClientId,
         cacheLocation: "localstorage"
@@ -41,34 +41,41 @@
 
       // Handle redirect after login
       if (window.location.search.includes("code=") && window.location.search.includes("state=")) {
-        await auth0.handleRedirectCallback();
+        await window.auth0.handleRedirectCallback();
         window.history.replaceState({}, document.title, "/");
       }
 
-      const isAuthenticated = await auth0.isAuthenticated();
+      const isAuthenticated = await window.auth0.isAuthenticated();
 
       if (isAuthenticated) {
         document.getElementById("content").style.display = "block";
         document.getElementById("login").style.display = "none";
         document.getElementById("logout").style.display = "inline";
       }
-
-      // Login button
-      document.getElementById("login").addEventListener("click", async () => {
-        await auth0.loginWithRedirect({ redirect_uri: window.location.origin });
-      });
-
-      // Logout button
-      document.getElementById("logout").addEventListener("click", () => {
-        auth0.logout({ returnTo: window.location.origin });
-      });
     };
 
-    // Run setup once page loads
-    window.onload = configureAuth0;
+    // Run Auth0 setup
+    window.onload = async () => {
+      await configureAuth0();
+
+      // Attach login button listener after DOM is ready
+      document.getElementById("login").addEventListener("click", async () => {
+        if (window.auth0) {
+          await window.auth0.loginWithRedirect({
+            redirect_uri: window.location.origin
+          });
+        } else {
+          alert("Auth0 not initialized yet!");
+        }
+      });
+
+      // Logout button listener
+      document.getElementById("logout").addEventListener("click", () => {
+        if (window.auth0) {
+          window.auth0.logout({ returnTo: window.location.origin });
+        }
+      });
+    };
   </script>
-<script>
-  alert("Auth0 SPA script loaded");
-</script>
 </body>
 </html>
