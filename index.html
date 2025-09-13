@@ -3,23 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <title>Private Site with Auth0</title>
+  <!-- Auth0 SPA JS -->
   <script src="https://cdn.auth0.com/js/auth0-spa-js/1.28/auth0-spa-js.production.js"></script>
+  <style>
+    #login, #logout { padding: 10px 20px; margin: 10px; font-size: 16px; }
+    #content { margin-top: 20px; font-size: 18px; }
+  </style>
 </head>
 <body>
-  <h1>Welcome to the Private Site</h1>
+  <h1>Welcome to 520 Private Site</h1>
+
+  <!-- Login / Logout Buttons -->
   <button id="login">Login</button>
   <button id="logout" style="display:none;">Logout</button>
+
+  <!-- Private Content -->
   <div id="content" style="display:none;">
-    <p>✅ You are logged in!</p>
+    <p>✅ You are logged in and can see this private content!</p>
   </div>
 
   <script>
+    // -----------------------------
+    // Auth0 configuration
+    // -----------------------------
     const auth0Domain = "dev-mpo3g6kdms6el57l.us.auth0.com";
     const auth0ClientId = "f0K8SW4AfzaGGC8gKHcuc5EFuEEIraIH";
     let auth0 = null;
 
-    const setup = async () => {
-      // Initialize Auth0
+    const setupAuth0 = async () => {
+      // Initialize Auth0 client globally
       auth0 = await createAuth0Client({
         domain: auth0Domain,
         client_id: auth0ClientId,
@@ -32,7 +44,7 @@
         window.history.replaceState({}, document.title, "/");
       }
 
-      // Check authentication
+      // Check authentication status
       const isAuthenticated = await auth0.isAuthenticated();
       if (isAuthenticated) {
         document.getElementById("content").style.display = "block";
@@ -40,20 +52,25 @@
         document.getElementById("logout").style.display = "inline";
       }
 
-      // Login button
+      // Login button click
       document.getElementById("login").addEventListener("click", async () => {
-        await auth0.loginWithRedirect({
-          redirect_uri: window.location.origin
-        });
+        if (auth0) {
+          await auth0.loginWithRedirect({ redirect_uri: window.location.origin });
+        } else {
+          alert("Auth0 not initialized yet!");
+        }
       });
 
-      // Logout button
+      // Logout button click
       document.getElementById("logout").addEventListener("click", () => {
-        auth0.logout({ returnTo: window.location.origin });
+        if (auth0) {
+          auth0.logout({ returnTo: window.location.origin });
+        }
       });
     };
 
-    window.onload = setup;
+    // Run setup once page is loaded
+    window.onload = setupAuth0;
   </script>
 </body>
 </html>
