@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Auth0 SPA Minimal Test</title>
-  <!-- Auth0 SPA JS library -->
   <script src="https://cdn.auth0.com/js/auth0-spa-js/1.28/auth0-spa-js.production.js"></script>
 </head>
 <body>
@@ -11,36 +10,26 @@
   <button id="login">Login</button>
 
   <script>
-    // --------------------------
-    // REPLACE WITH YOUR AUTH0 SETTINGS
-    // --------------------------
     const auth0Domain = "dev-mpo3g6kdms6el57l.us.auth0.com";
     const auth0ClientId = "f0K8SW4AfzaGGC8gKHcuc5EFuEEIraIH";
 
     let auth0 = null;
 
     window.onload = async () => {
-      // Initialize Auth0 client
       auth0 = await createAuth0Client({
         domain: auth0Domain,
         client_id: auth0ClientId,
         cacheLocation: "localstorage"
       });
 
-      // Attach login button
-      const loginBtn = document.getElementById("login");
-      loginBtn.addEventListener("click", async () => {
-        if (!auth0) {
-          alert("Auth0 not initialized!");
-          return;
-        }
-        // Trigger login redirect
+      document.getElementById("login").addEventListener("click", async () => {
+        alert("Login button clicked ✅"); // Debug
         await auth0.loginWithRedirect({
-          redirect_uri: window.location.origin
+          redirect_uri: "https://ilwu520.netlify.app/"
         });
       });
 
-      console.log("Auth0 initialized and button listener attached.");
+      console.log("Auth0 initialized.");
     };
   </script>
 </body>
