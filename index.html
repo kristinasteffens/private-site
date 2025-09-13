@@ -22,20 +22,23 @@
   </div>
 
   <script>
-    // Replace these with your Auth0 app settings
-    const auth0Domain = "dev-mpo3g6kdms6el57l.us.auth0.com"; // e.g., mytenant.us.auth0.com
-    const auth0ClientId = "f0K8SW4AfzaGGC8gKHcuc5EFuEEIraIH";
+    // --------------------------
+    // REPLACE THESE WITH YOUR AUTH0 VALUES
+    // --------------------------
+    const auth0Domain = "dev-mpo3g6kdms6el57l.us.auth0.com";      // e.g., dev-mpo3g6kdms6el57l.us.auth0.com
+    const auth0ClientId = "f0K8SW4AfzaGGC8gKHcuc5EFuEEIraIH"; // e.g., f0K8SW4AfzaGGC8gKHcuc5EFuEEIraIH
 
     let auth0 = null;
 
     const configureAuth0 = async () => {
+      // Initialize Auth0 client
       auth0 = await createAuth0Client({
         domain: auth0Domain,
         client_id: auth0ClientId,
         cacheLocation: "localstorage"
       });
 
-      // Check if returning from Auth0 redirect
+      // Handle redirect after login
       if (window.location.search.includes("code=") && window.location.search.includes("state=")) {
         await auth0.handleRedirectCallback();
         window.history.replaceState({}, document.title, "/");
@@ -49,21 +52,18 @@
         document.getElementById("logout").style.display = "inline";
       }
 
-   // Login button (debug version)
-document.getElementById("login").addEventListener("click", async () => {
-  alert("Login button clicked!");  // <-- This is the debug alert
-  // Uncomment this line when ready to test Auth0 login
-  // await auth0.loginWithRedirect({ redirect_uri: window.location.origin });
-});
+      // Login button
+      document.getElementById("login").addEventListener("click", async () => {
+        await auth0.loginWithRedirect({ redirect_uri: window.location.origin });
+      });
 
       // Logout button
       document.getElementById("logout").addEventListener("click", () => {
-        auth0.logout({
-          returnTo: window.location.origin
-        });
+        auth0.logout({ returnTo: window.location.origin });
       });
     };
 
+    // Run setup once page loads
     window.onload = configureAuth0;
   </script>
 </body>
